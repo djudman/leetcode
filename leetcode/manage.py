@@ -12,27 +12,25 @@ def create_file(line: str) -> None:
     Create new *.py file in `solutions` directory and open it in editor
     """
     editor = 'charm'
-    template = """from typing import List, Optional
-
-from leetcode.utils.tree import TreeNode, make_binary_tree
-
-
-class Solution:
-    def solve(self) -> None:
-        pass
-"""
-
     if re.match(r'^([a-z]+)://(.+)$', line):
         data = urlparse(line)
         name = data.path.strip(' \t/').split('/')[-1]
     else:
         name = line
+    url = f'https://leetcode.com/problems/{name}/'
     name = name.replace('-', '_')
     filename = realpath(join(dirname(__file__), 'solutions', f'{name}.py'))
     if not exists(filename):
+        template = ''\
+            f'from typing import List, Optional\n\n'\
+            'from leetcode.utils.tree import TreeNode, make_binary_tree\n\n\n'\
+            f'# {url}\n'\
+            'class Solution:\n'\
+            '    def solve(self) -> None:\n'\
+            '        pass\n'
         with open(filename, 'w') as f:
             f.write(template)
-    os.system(f'{editor} {filename}')
+    os.system(f'{editor} {filename}:9')
 
 
 if __name__ == '__main__':
