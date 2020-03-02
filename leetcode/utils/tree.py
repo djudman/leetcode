@@ -43,6 +43,9 @@ class TreeNode(object):
         out.extend(self.get_values())
         return json.dumps(out)
 
+    def __bool__(self):
+        return bool(self.val)
+
     def get_values(self) -> List:
         values = []
         if self.left or self.right:
