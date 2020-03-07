@@ -27,7 +27,10 @@ def create_file(line: str) -> None:
             f'# {url}\n'\
             'class Solution:\n'\
             '    def solve(self) -> None:\n'\
-            '        pass\n'
+            '       """\n'\
+            '       >>> solution = Solution()\n'\
+            '       """\n'\
+            '       pass\n'
         with open(filename, 'w') as f:
             f.write(template)
     os.system(f'{editor} {filename}:9')
