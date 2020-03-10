@@ -23,14 +23,15 @@ def create_file(line: str) -> None:
     if not exists(filename):
         template = ''\
             f'from typing import List, Optional\n\n'\
+            'from leetcode.utils.list import ListNode, make_linked_list\n'\
             'from leetcode.utils.tree import TreeNode, make_binary_tree\n\n\n'\
             f'# {url}\n'\
             'class Solution:\n'\
             '    def solve(self) -> None:\n'\
-            '       """\n'\
-            '       >>> solution = Solution()\n'\
-            '       """\n'\
-            '       pass\n'
+            '        """\n'\
+            '        >>> solution = Solution()\n'\
+            '        """\n'\
+            '        pass\n'
         with open(filename, 'w') as f:
             f.write(template)
     os.system(f'{editor} {filename}:9')
