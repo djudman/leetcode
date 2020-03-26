@@ -9,7 +9,6 @@ class Solution:
     def isIsomorphic(self, s: str, t: str) -> bool:
         """
         >>> solution = Solution()
-
         >>> solution.isIsomorphic('egg', 'add')
         True
         >>> solution.isIsomorphic('foo', 'bar')
@@ -33,10 +32,9 @@ class Solution:
         used = {}
         for i in range(len(s)):
             char = alphabet.get(s[i])
-            if char:
-                if char != t[i]:
-                    return False
-            elif t[i] in used:
+            if char and char != t[i]:
+                return False
+            if not char and t[i] in used:
                 return False
             alphabet[s[i]] = t[i]
             used[t[i]] = True
