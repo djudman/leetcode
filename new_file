@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import re
+import sys
+from pathlib import Path
+from urllib.parse import urlparse
+from os.path import dirname, join, realpath, exists
+
+
+file_type_map = {
+    'python': {
+        'extension': 'py',
+        'content': lambda kwargs: '' \
+            f'from typing import List, Optional\n\n' \
+            'from leetcode.utils.list import ListNode, make_linked_list\n' \
+            'from leetcode.utils.tree import TreeNode, make_binary_tree\n\n\n' \
+            f'# {kwargs["url"]}\n' \
+            'class Solution:\n' \
+            '    def solve(self) -> None:\n' \
+            '        """\n' \
+            '        >>> solution = Solution()\n' \
+            '        """\n' \
+            '        pass\n',
+        'line': 9,
+    },
+
+    'sql': {
+        'content': lambda kwargs: f'-- {kwargs["url"]}\n',
+        'line': 2,
+    },
+
+    'bash': {
+        'extension': 'sh',
+        'content': lambda kwargs: f'#!/bin/bash\n# {kwargs["url"]}\n\n',
+        'line': 4,
+    },
+}
+
+
+def create_file(line: str, file_type: str) -> None:
+    """
+    Create new file in `solutions` directory and open it in editor
+    """
+    if re.match(r'^([a-z]+)://(.+)$', line):
+        data = urlparse(line)
+        name = data.path.strip(' \t/').split('/')[-1]
+    else:
+        name = line
+    url = f'https://leetcode.com/problems/{name}/'
+    name = name.replace('-', '_')
+    file_info = file_type_map[file_type]
+    extension = file_info.get('extension', file_type)
+    filepath = realpath(join(dirname(__file__), 'leetcode/solutions', f'{name}.{extension}'))
+    if exists(filepath):
+        sys.stderr.write(f'`{filepath}` already exists')
+    else:
+        init_content = file_info['content']({'url': url})
+        with open(filepath, 'w') as f:
+            f.write(init_content)
+    os.system(f'code --goto {filepath}:{file_info["line"]}')  # open vscode
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url', metavar='URL|slug', type=str)
+    parser.add_argument('--type', metavar='File type', type=str,
+                        choices=file_type_map.keys(), default='python')
+    args = parser.parse_args()
+    if args.url:
+        create_file(args.url, args.type)
+    else:
+        parser.print_help()
